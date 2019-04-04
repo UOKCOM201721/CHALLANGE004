@@ -1,6 +1,15 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 
+txt = ''
+turn = 'X'
+btn = {}
+whiteimg = ''
+
+
+class Processing:
+    pass
+
 
 class App:
     frames = {}
@@ -35,13 +44,14 @@ class Frame1(tk.Frame):
 
 
 class Frame2up:
-    btn = {}
+    global btn
 
     def main(self, parent, controller):
+        global whiteimg
         self.ximg = ImageTk.PhotoImage(Image.open('x.jpg'))
         self.oimg = ImageTk.PhotoImage(Image.open('o.jpg'))
         self.uimg = ImageTk.PhotoImage(Image.open('n.jpg'))
-
+        whiteimg = self.uimg
         self.con = tk.Frame(parent, bg='black')
         i = 1
         rowg = 0
@@ -52,7 +62,7 @@ class Frame2up:
             x.grid(row=rowg, column=colg, padx=2, pady=2)
             x.__name__ = 'Btn-%s' % str(i)
             x.bind("<Button-1>", self.clickevent)
-            self.btn[x.__name__] = x
+            btn[x.__name__] = x
             i += 1
             if colg == 2:
                 colg = 0
@@ -63,16 +73,36 @@ class Frame2up:
         return self.con
 
     def clickevent(self, event):
-        event.widget.config(image = self.oimg)
+        global turn, txt
+        if turn == 'X'"":
+            turn = 'O'
+            img = self.ximg
+        elif turn == 'O':
+            turn = 'X'
+            img = self.oimg
+        event.widget.config(image=img)
+        txt.config(text="'%s' turn" % turn)
 
 
 class Frame2down:
     def main(self, parent, controller):
+        global txt
         self.con = tk.Frame(parent)
-        reset = tk.Button(self.con, text='reset', command=lambda: controller.up('Frame1'))
+        reset = tk.Button(self.con, text='reset', command=lambda: self.reset())
         reset.grid(row=0, column=0, columnspan=2, pady=10)
         self.con.pack()
+        txt = tk.Label(self.con, text='')
+        txt.grid(row=1, column=0, columnspan=3, padx=10)
         return self.con
+
+    def reset(self):
+        global btn, whiteimg, txt, turn
+
+        for x in btn:
+            btn[x].config(image=whiteimg)
+            txt.config(text="'X' turn")
+            turn = "X"
+
 
 
 class Frame2(Frame2up, Frame2down, tk.Frame):
